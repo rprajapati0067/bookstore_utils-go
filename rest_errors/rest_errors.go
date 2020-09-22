@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"net/http"
+	_ "github.com/jinzhu/gorm"
 )
 
 type RestErr interface {
@@ -90,7 +92,7 @@ func NewInternalServerError(message string, err error) RestErr {
 	}
 	return result
 }
-func NewInternalServerDBError(message string) RestErr {
+func NewInternalServerDBError(message string, dbError gorm.Errors) RestErr {
 	result := restErr{
 		ErrMessage: message,
 		ErrStatus:  http.StatusInternalServerError,
