@@ -90,6 +90,14 @@ func NewInternalServerError(message string, err error) RestErr {
 	}
 	return result
 }
+func NewInternalServerDBError(message string) RestErr {
+	result := restErr{
+		ErrMessage: message,
+		ErrStatus:  http.StatusInternalServerError,
+		ErrError:   "internal_server_error",
+	}
+	return result
+}
 func NewError(message string) error {
 	return errors.New(message)
 }
