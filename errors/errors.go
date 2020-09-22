@@ -2,53 +2,41 @@ package errors
 
 import "net/http"
 
-type Errors interface {
-	Message() string
-	Status() int
-	Error() string
-	Causes() []interface{}
+var (
+	RestErrors restErrorInterface = &RestError{}
+)
+
+type restErrorInterface interface {
+	NewNotFoundError(string) *RestError
+	NewBadRequestError(string) *RestError
+	NewInternalServerError(string) *RestError
 }
 
-type error struct {
-	ErrMessage string        `json:"message"`
-	ErrStatus  int           `json:"status"`
-	ErrError   string        `json:"error"`
-	ErrCauses  []interface{} `json:"causes"`
+type RestError struct {
+	Message string `json:"message"`
+	Status  int    `json:"code"`
+	Error   string `json:"error"`
 }
 
-func (e error) Message() string {
-	panic("implement me")
-}
-
-func (e error) Status() int {
-	panic("implement me")
-}
-
-func (e error) Error() string {
-	panic("implement me")
-}
-
-func (e error) Causes() []interface{} {
-	panic("implement me")
-}
-
-func NewNotFoundError(message string) Errors {
-	var result Errors
-	result = error{
-		ErrMessage: message,
-		ErrStatus:  http.StatusNotFound,
-		ErrError:   "not_found",
+func (re *RestError) NewNotFoundError(message string) *RestError {
+	return &RestError{
+		Message: message,
+		Status:  http.StatusNotFound,
+		Error:   "not_found",
 	}
-
-	return result
 }
 
-func NewInternalServerError(message string, err string) Errors {
-	result := error{
-		ErrMessage: message,
-		ErrStatus:  http.StatusInternalServerError,
-		ErrError:   "internal_server_error",
+func (re *RestError) NewBadRequestError(message string) *RestError {
+	return &RestError{
+		Message: message,
+		Status:  http.StatusBadRequest,
+		Error:   "bad_request",
 	}
-
-	return result
+}
+func (re *RestError) NewInternalServerError(message string) *RestError {
+	return &RestError{
+		Message: message,
+		Status:  http.StatusInternalServerError,
+		Error:   "internal_server_error",
+	}
 }
